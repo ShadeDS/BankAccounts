@@ -1,8 +1,9 @@
 package com.nulianov.bankaccounts.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Account {
+public class Account implements Serializable {
     private String id;
     private String firstName;
     private String lastName;

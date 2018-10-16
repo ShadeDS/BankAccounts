@@ -18,32 +18,9 @@ public class TransferController {
 
     public static Route transfer = (Request request, Response response) -> {
         try {
-            Transfer body = new Gson().fromJson(request.body(), Transfer.class);
-
-            Account from = accountService.getAccount(body.getFrom());
-            Account to = accountService.getAccount(body.getTo());
-
-            log.info("Transfer from {} to {}", from.getId(), to.getId());
-
-            Object firstLock, secondLock;
-            if (from.getId().compareTo(to.getId()) > 0) {
-                firstLock = from;
-                secondLock = to;
-            } else {
-                firstLock = to;
-                secondLock = from;
-            }
-
-            synchronized (firstLock) {
-                synchronized (secondLock) {
-                    from.withdraw(body.getAmount());
-                    to.deposit(body.getAmount());
-
-                    accountService.updateAccount(from);
-                    accountService.updateAccount(to);
-                }
-            }
-
+            Transfer transferInfo = new Gson().fromJson(request.body(), Transfer.class);
+            log.info("Transfer from {} to {}", transferInfo.getFrom(), transferInfo.getTo());
+            accountService.transfer(transferInfo);
        } catch (Exception e){
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             return e.getMessage();

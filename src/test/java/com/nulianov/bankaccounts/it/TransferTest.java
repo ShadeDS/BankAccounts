@@ -43,17 +43,16 @@ public class TransferTest {
 
         HttpResponse httpResponse = testServer.execute(post);
         Assert.assertEquals(200, httpResponse.code());
-
     }
 
     @Test
     public void transferInsufficientAmount() throws Exception {
-        Transfer transfer = new Transfer("111", "222", new BigDecimal(100));
+
+        Transfer transfer = new Transfer("111", "222", new BigDecimal(1000));
         PostMethod post = testServer.post("/api/transfer", new Gson().toJson(transfer), false);
 
         HttpResponse httpResponse = testServer.execute(post);
         Assert.assertEquals(500, httpResponse.code());
-
     }
 
     @AfterClass

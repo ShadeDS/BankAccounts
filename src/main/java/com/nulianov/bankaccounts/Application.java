@@ -8,7 +8,6 @@ import static spark.Spark.*;
 public class Application {
 
     //TODO: in memory database
-    //TODO: tests
     //TODO: DI
     public static void main(String[] args) {
         path("/api", () -> {
