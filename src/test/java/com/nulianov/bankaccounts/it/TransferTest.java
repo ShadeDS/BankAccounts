@@ -47,7 +47,6 @@ public class TransferTest {
 
     @Test
     public void transferInsufficientAmount() throws Exception {
-
         Transfer transfer = new Transfer("111", "222", new BigDecimal(1000));
         PostMethod post = testServer.post("/api/transfer", new Gson().toJson(transfer), false);
 

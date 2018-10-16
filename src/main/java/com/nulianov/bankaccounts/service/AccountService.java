@@ -8,7 +8,7 @@ public interface AccountService {
 
     Account getAccount(String id);
 
-    void deleteAccount(String id);
+    void deleteAccount(String id) throws Exception;
 
     void transfer(Transfer transfer) throws Exception;
 }

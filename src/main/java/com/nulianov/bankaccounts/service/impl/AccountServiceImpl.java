@@ -9,9 +9,12 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AccountServiceImpl implements AccountService {
-    public static volatile DB db = DBMaker.memoryDB().transactionEnable().closeOnJvmShutdown().make();
+    private Map<String, Boolean> lockedAccounts = new ConcurrentHashMap<>();
+    private static volatile DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
+    
     @Override
     public void addAccount(Account account) throws Exception{
         Map<String, Account> storage = getStorage(db);
@@ -29,24 +32,53 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(String id) {
+    public void deleteAccount(String id) throws Exception {
         Map<String, Account> storage = getStorage(db);
-        storage.remove(id);
-        db.commit();
+        while (lockedAccounts.putIfAbsent(id, true) != null) {
+            Thread.sleep(1);
+        }
+        try {
+            storage.remove(id);
+            db.commit();
+        } finally {
+            lockedAccounts.remove(id);
+        }
     }
 
     @Override
     public void transfer(Transfer transfer) throws Exception {
         Map<String, Account> storage = getStorage(db);
-        Account from = getAccount(transfer.getFrom());
-        Account to = getAccount(transfer.getTo());
 
-        from.withdraw(transfer.getAmount());
-        to.deposit(transfer.getAmount());
+        String lockFirst, lockSecond;
+        if (transfer.getFrom().compareTo(transfer.getTo()) > 0) {
+            lockFirst = transfer.getTo();
+            lockSecond = transfer.getFrom();
+        } else {
+            lockFirst = transfer.getFrom();
+            lockSecond = transfer.getTo();
+        }
 
-        storage.put(from.getId(), from);
-        storage.put(to.getId(), to);
-        db.commit();
+        while (lockedAccounts.putIfAbsent(lockFirst, true) != null) {
+            Thread.sleep(1);
+        }
+
+        while (lockedAccounts.putIfAbsent(lockSecond, true) != null) {
+            Thread.sleep(1);
+        }
+        try {
+            Account from = getAccount(transfer.getFrom());
+            Account to = getAccount(transfer.getTo());
+
+            from.withdraw(transfer.getAmount());
+            to.deposit(transfer.getAmount());
+
+            storage.put(from.getId(), from);
+            storage.put(to.getId(), to);
+            db.commit();
+        } finally {
+            lockedAccounts.remove(lockSecond);
+            lockedAccounts.remove(lockFirst);
+        }
     }
 
     private Map<String, Account> getStorage(DB db) {

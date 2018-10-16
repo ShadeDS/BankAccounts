@@ -49,7 +49,13 @@ public class AccountController {
     public static Route deleteAccount = (Request request, Response response) -> {
         String id = request.params(":id");
         log.info("Delete account with id {}", id);
-        accountService.deleteAccount(id);
+        try {
+            accountService.deleteAccount(id);
+        } catch (Exception e) {
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            response.body(e.getMessage());
+            return response.body();
+        }
         response.status(HttpStatus.OK_200);
         response.body("Account " + id + " was deleted successfully");
         return response.body();
