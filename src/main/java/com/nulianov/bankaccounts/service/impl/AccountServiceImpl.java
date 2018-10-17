@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AccountServiceImpl implements AccountService {
     private Map<String, Boolean> lockedAccounts = new ConcurrentHashMap<>();
     private static volatile DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
-    
+
     @Override
     public void addAccount(Account account) throws Exception{
         Map<String, Account> storage = getStorage(db);
