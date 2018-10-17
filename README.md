@@ -4,8 +4,9 @@
 REST API of Bank Accounts project
 
 
-### URI scheme
+### Server settings
 *Host* : localhost  
+*Port* : 4567 
 
 
 ## Paths
