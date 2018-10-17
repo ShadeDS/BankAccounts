@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AccountServiceImpl implements AccountService {
-    private Map<String, Boolean> lockedAccounts = new ConcurrentHashMap<>();
-    private static volatile DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
+    private static final Map<String, Boolean> lockedAccounts = new ConcurrentHashMap<>();
+    private static final DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
 
     @Override
     public void addAccount(Account account) throws Exception{
-        Map<String, Account> storage = getStorage(db);
+        Map<String, Account> storage = getStorage();
         if (storage.get(account.getId()) != null) {
             throw new Exception("Account with id " + account.getId() + " already exists");
         }
@@ -27,13 +27,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(String id) {
-        Map<String, Account> storage = getStorage(db);
+        Map<String, Account> storage = getStorage();
         return storage.get(id);
     }
 
     @Override
     public void deleteAccount(String id) throws Exception {
-        Map<String, Account> storage = getStorage(db);
+        Map<String, Account> storage = getStorage();
         while (lockedAccounts.putIfAbsent(id, true) != null) {
             Thread.sleep(1);
         }
@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void transfer(Transfer transfer) throws Exception {
-        Map<String, Account> storage = getStorage(db);
+        Map<String, Account> storage = getStorage();
 
         String lockFirst, lockSecond;
         if (transfer.getFrom().compareTo(transfer.getTo()) > 0) {
@@ -81,7 +81,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    private Map<String, Account> getStorage(DB db) {
+    private Map<String, Account> getStorage() {
         return db.hashMap("Accounts").keySerializer(Serializer.STRING).valueSerializer(new CustomAccountSerializer()).createOrOpen();
     }
 }

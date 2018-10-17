@@ -16,7 +16,7 @@ public class AccountController {
     private AccountService accountService;
 
     @Inject
-    Gson gson;
+    private Gson gson;
 
     public Route getAccount() {
         return (request, response) -> {
