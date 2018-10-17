@@ -9,9 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Route;
 
-
 public class TransferController {
-    private static Logger log = LoggerFactory.getLogger(TransferController.class);
+    private static final Logger log = LoggerFactory.getLogger(TransferController.class);
 
     @Inject
     private AccountService accountService;

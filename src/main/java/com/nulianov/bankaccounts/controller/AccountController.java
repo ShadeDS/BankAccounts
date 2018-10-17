@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import spark.Route;
 
 public class AccountController {
-    private static Logger log = LoggerFactory.getLogger(AccountController.class);
+    private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
     @Inject
     private AccountService accountService;

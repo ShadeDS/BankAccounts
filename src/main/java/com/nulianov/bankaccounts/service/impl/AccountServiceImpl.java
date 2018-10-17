@@ -27,18 +27,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(String id) {
-        Map<String, Account> storage = getStorage();
-        return storage.get(id);
+        return getStorage().get(id);
     }
 
     @Override
     public void deleteAccount(String id) throws Exception {
-        Map<String, Account> storage = getStorage();
         while (lockedAccounts.putIfAbsent(id, true) != null) {
             Thread.sleep(1);
         }
         try {
-            storage.remove(id);
+            getStorage().remove(id);
             db.commit();
         } finally {
             lockedAccounts.remove(id);
