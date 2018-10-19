@@ -1,5 +1,7 @@
 package com.nulianov.bankaccounts.domain;
 
+import com.nulianov.bankaccounts.exception.InsufficientFundsException;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -46,9 +48,9 @@ public class Account implements Serializable {
         }
     }
 
-    public void withdraw(BigDecimal amount) throws Exception{
+    public void withdraw(BigDecimal amount) {
         if (balance.compareTo(amount) < 0) {
-            throw new Exception("Account " + id + " has no sufficient funds");
+            throw new InsufficientFundsException(id);
         } else {
             balance = balance.subtract(amount);
         }

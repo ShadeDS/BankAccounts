@@ -3,6 +3,7 @@ package com.nulianov.bankaccounts.service.impl;
 import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
 import com.nulianov.bankaccounts.domain.serializer.CustomAccountSerializer;
+import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 import com.nulianov.bankaccounts.service.AccountService;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -45,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void transfer(Transfer transfer) throws Exception {
+    public void transfer(Transfer transfer) throws InterruptedException, InsufficientFundsException {
         Map<UUID, Account> storage = getStorage();
 
         UUID lockFirst, lockSecond;

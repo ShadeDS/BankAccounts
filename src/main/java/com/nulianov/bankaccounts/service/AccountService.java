@@ -2,6 +2,7 @@ package com.nulianov.bankaccounts.service;
 
 import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
+import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 
 import java.util.UUID;
 
@@ -34,8 +35,9 @@ public interface AccountService {
      * If both transfer participants are present in database and sender has
      * a sufficient amount of money processes the transfer,
      * else returns an exception
-     * @param transfer specifies the sender, the recipient and the amount of money to transfer
-     * @throws Exception couldn't transfer from one account to another correctly
+     * @param transfer transfer specifies the sender, the recipient and the amount of money to transfer
+     * @throws InterruptedException thread was interrupted while trying to lock account
+     * @throws InsufficientFundsException account has no sufficient funds to transfer
      */
-    void transfer(Transfer transfer) throws Exception;
+    void transfer(Transfer transfer) throws InterruptedException, InsufficientFundsException;
 }

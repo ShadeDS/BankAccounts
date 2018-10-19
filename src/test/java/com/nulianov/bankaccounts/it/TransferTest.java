@@ -51,7 +51,7 @@ public class TransferTest {
         PostMethod post = testServer.post("/api/transfer", new Gson().toJson(transfer), false);
 
         HttpResponse httpResponse = testServer.execute(post);
-        Assert.assertEquals(500, httpResponse.code());
+        Assert.assertEquals(400, httpResponse.code());
     }
 
     @AfterClass
