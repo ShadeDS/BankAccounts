@@ -55,7 +55,7 @@ Returns account with specified id from database
 
 |Type|Name|Description|Schema|
 |---|---|---|---|
-|**Path**|**id**  <br>*required*|Account id|string|
+|**Path**|**id**  <br>*required*|Account id|uuid|
 
 
 #### Responses
@@ -84,7 +84,7 @@ Removes account with specified id from database
 
 |Type|Name|Description|Schema|
 |---|---|---|---|
-|**Path**|**id**  <br>*required*|Account id|string|
+|**Path**|**id**  <br>*required*|Account id|uuid|
 
 
 #### Responses
@@ -116,6 +116,7 @@ Transfers money from one account to another
 |HTTP Code|Description|Schema|
 |---|---|---|
 |**200**|Transfer was completed successfully|No Content|
+|**400**|Transfer failed because sender has insufficient funds|No Content|
 |**500**|Internal error|No Content|
 
 
@@ -128,7 +129,7 @@ Transfers money from one account to another
 |---|---|
 |**firstName**  <br>*optional*|string|
 |**lastName**  <br>*optional*|string|
-|**id**  <br>*required*|string|
+|**id**  <br>*optional*|uuid|
 |**balance**  <br>*required*|BigDecimal|
 
 
@@ -137,6 +138,6 @@ Transfers money from one account to another
 
 |Name|Schema|
 |---|---|
-|**from**  <br>*required*|string|
-|**to**  <br>*required*|string|
+|**from**  <br>*required*|uuid|
+|**to**  <br>*required*|uuid|
 |**amount**  <br>*required*|BigDecimal|
