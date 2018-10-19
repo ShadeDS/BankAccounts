@@ -3,6 +3,7 @@ package com.nulianov.bankaccounts.controller;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.nulianov.bankaccounts.domain.Account;
+import com.nulianov.bankaccounts.exception.AccountDuplicationException;
 import com.nulianov.bankaccounts.service.AccountService;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
@@ -45,8 +46,8 @@ public class AccountController {
 
             try {
                 accountService.addAccount(user);
-            } catch (Exception e){
-                response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            } catch (AccountDuplicationException e){
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return e.getMessage();
             }
 

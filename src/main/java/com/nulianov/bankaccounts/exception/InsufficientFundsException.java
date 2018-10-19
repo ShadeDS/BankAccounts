@@ -6,14 +6,14 @@ import java.util.UUID;
  * Shows that account has no sufficient funds to transfer
  */
 public class InsufficientFundsException extends IllegalArgumentException {
-    private final UUID id;
+    private final String message;
 
-    public InsufficientFundsException(UUID id) {
-        this.id = id;
+    public InsufficientFundsException(UUID accountId) {
+        this.message = "Account " + accountId + " has no sufficient funds to make the transfer";
     }
 
     @Override
     public String getMessage() {
-        return "Account " + id + " has no sufficient funds to make the transfer";
+        return message;
     }
 }

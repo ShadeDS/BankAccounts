@@ -34,7 +34,7 @@ Creates new bank account in database
 |HTTP Code|Description|Schema|
 |---|---|---|
 |**201**|Account was created|Account|
-|**500**|Internal error|No Content|
+|**400**|Account with the same id already exists in database|No Content|
 
 
 #### Produces

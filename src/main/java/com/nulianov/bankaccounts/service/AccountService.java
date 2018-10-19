@@ -2,6 +2,7 @@ package com.nulianov.bankaccounts.service;
 
 import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
+import com.nulianov.bankaccounts.exception.AccountDuplicationException;
 import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 
 import java.util.UUID;
@@ -11,9 +12,9 @@ public interface AccountService {
      * If there is no account with the same id puts the account into database,
      * else throws an exception
      * @param account to put into database
-     * @throws Exception there is another account with the same id in database
+     * @throws AccountDuplicationException there is another account with the same id in database
      */
-    void addAccount(Account account) throws Exception;
+    void addAccount(Account account) throws AccountDuplicationException;
 
     /**
      * If an account with specified id is present in database returns this account,

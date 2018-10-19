@@ -3,6 +3,7 @@ package com.nulianov.bankaccounts.service.impl;
 import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
 import com.nulianov.bankaccounts.domain.serializer.CustomAccountSerializer;
+import com.nulianov.bankaccounts.exception.AccountDuplicationException;
 import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 import com.nulianov.bankaccounts.service.AccountService;
 import org.mapdb.DB;
@@ -18,10 +19,10 @@ public class AccountServiceImpl implements AccountService {
     private static final DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
 
     @Override
-    public void addAccount(Account account) throws Exception{
+    public void addAccount(Account account) throws AccountDuplicationException{
         Map<UUID, Account> storage = getStorage();
         if (storage.get(account.getId()) != null) {
-            throw new Exception("Account with id " + account.getId() + " already exists");
+            throw new AccountDuplicationException(account.getId());
         }
         storage.put(account.getId(), account);
         db.commit();
