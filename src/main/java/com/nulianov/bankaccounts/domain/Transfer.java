@@ -1,23 +1,24 @@
 package com.nulianov.bankaccounts.domain;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class Transfer {
-    private String from;
-    private String to;
+    private UUID from;
+    private UUID to;
     private BigDecimal amount;
 
-    public Transfer(String from, String to, BigDecimal amount) {
+    public Transfer(UUID from, UUID to, BigDecimal amount) {
         this.from = from;
         this.to = to;
         this.amount = amount;
     }
 
-    public String getFrom() {
+    public UUID getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public UUID getTo() {
         return to;
     }
 

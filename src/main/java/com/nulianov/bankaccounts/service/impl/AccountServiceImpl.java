@@ -9,15 +9,16 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AccountServiceImpl implements AccountService {
-    private static final Map<String, Boolean> lockedAccounts = new ConcurrentHashMap<>();
+    private static final Map<UUID, Boolean> lockedAccounts = new ConcurrentHashMap<>();
     private static final DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
 
     @Override
     public void addAccount(Account account) throws Exception{
-        Map<String, Account> storage = getStorage();
+        Map<UUID, Account> storage = getStorage();
         if (storage.get(account.getId()) != null) {
             throw new Exception("Account with id " + account.getId() + " already exists");
         }
@@ -26,12 +27,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getAccount(String id) {
+    public Account getAccount(UUID id) {
         return getStorage().get(id);
     }
 
     @Override
-    public void deleteAccount(String id) throws Exception {
+    public void deleteAccount(UUID id) throws Exception {
         while (lockedAccounts.putIfAbsent(id, true) != null) {
             Thread.sleep(1);
         }
@@ -45,9 +46,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void transfer(Transfer transfer) throws Exception {
-        Map<String, Account> storage = getStorage();
+        Map<UUID, Account> storage = getStorage();
 
-        String lockFirst, lockSecond;
+        UUID lockFirst, lockSecond;
         if (transfer.getFrom().compareTo(transfer.getTo()) > 0) {
             lockFirst = transfer.getTo();
             lockSecond = transfer.getFrom();
@@ -79,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    private Map<String, Account> getStorage() {
-        return db.hashMap("Accounts").keySerializer(Serializer.STRING).valueSerializer(new CustomAccountSerializer()).createOrOpen();
+    private Map<UUID, Account> getStorage() {
+        return db.hashMap("Accounts").keySerializer(Serializer.UUID).valueSerializer(new CustomAccountSerializer()).createOrOpen();
     }
 }

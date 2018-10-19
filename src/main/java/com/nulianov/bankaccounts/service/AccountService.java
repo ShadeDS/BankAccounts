@@ -3,6 +3,8 @@ package com.nulianov.bankaccounts.service;
 import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
 
+import java.util.UUID;
+
 public interface AccountService {
     /**
      * If there is no account with the same id puts the account into database,
@@ -19,14 +21,14 @@ public interface AccountService {
      * @return the account to which the specified id belongs, or
      * {@code null} if database doesn't contain account with specified id
      */
-    Account getAccount(String id);
+    Account getAccount(UUID id);
 
     /**
      * Removes an account with specified id from database
      * @param id identifies the account to remove
      * @throws Exception couldn't remove the account correctly
      */
-    void deleteAccount(String id) throws Exception;
+    void deleteAccount(UUID id) throws Exception;
 
     /**
      * If both transfer participants are present in database and sender has

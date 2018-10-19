@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Route;
 
+import java.util.UUID;
+
 public class AccountController {
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
@@ -20,7 +22,7 @@ public class AccountController {
 
     public Route getAccount() {
         return (request, response) -> {
-            String id = request.params(":id");
+            UUID id = UUID.fromString(request.params(":id"));
             log.info("Get account with id {}", id);
             Account account = accountService.getAccount(id);
 
@@ -37,8 +39,9 @@ public class AccountController {
 
     public Route createAccount(){
         return (request, response) -> {
-            log.info("Create account");
             Account user = gson.fromJson(request.body(), Account.class);
+            user.generateId();
+            log.info("Create new account with id {}", user.getId());
 
             try {
                 accountService.addAccount(user);
@@ -54,7 +57,7 @@ public class AccountController {
 
     public Route deleteAccount() {
         return (request, response) -> {
-            String id = request.params(":id");
+            UUID id = UUID.fromString(request.params(":id"));
             log.info("Delete account with id {}", id);
             try {
                 accountService.deleteAccount(id);

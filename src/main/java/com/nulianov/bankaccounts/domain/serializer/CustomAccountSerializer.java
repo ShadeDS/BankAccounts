@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class CustomAccountSerializer implements Serializer<Account>, Serializable {
     @Override
     public void serialize(@NotNull DataOutput2 out, @NotNull Account value) throws IOException {
-        out.writeUTF(value.getId());
+        out.writeUTF(value.getId().toString());
         out.writeUTF(value.getFirstName());
         out.writeUTF(value.getLastName());
         out.writeUTF(value.getBalance().toString());
@@ -21,6 +21,6 @@ public class CustomAccountSerializer implements Serializer<Account>, Serializabl
 
     @Override
     public Account deserialize(@NotNull DataInput2 input, int available) throws IOException {
-        return new Account(input.readUTF(), input.readUTF(), input.readUTF(), new BigDecimal(input.readUTF()));
+        return new Account(java.util.UUID.fromString(input.readUTF()), input.readUTF(), input.readUTF(), new BigDecimal(input.readUTF()));
     }
 }

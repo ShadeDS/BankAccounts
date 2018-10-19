@@ -2,21 +2,29 @@ package com.nulianov.bankaccounts.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class Account implements Serializable {
-    private String id;
+    private UUID id;
     private String firstName;
     private String lastName;
     private BigDecimal balance;
 
-    public Account(String id, String firstName, String lastName, BigDecimal balance) {
+    public Account(String firstName, String lastName, BigDecimal balance) {
+        generateId();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.balance = balance;
+    }
+
+    public Account(UUID id, String firstName, String lastName, BigDecimal balance) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.balance = balance;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -30,6 +38,12 @@ public class Account implements Serializable {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public void generateId() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID();
+        }
     }
 
     public void withdraw(BigDecimal amount) throws Exception{

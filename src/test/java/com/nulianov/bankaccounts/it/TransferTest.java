@@ -14,8 +14,8 @@ import spark.servlet.SparkApplication;
 import java.math.BigDecimal;
 
 public class TransferTest {
-    private static final Account from = new Account("111", "Ivan", "Ivanov", new BigDecimal(10.5));
-    private static final Account to = new Account("222", "Petr", "Petrov", new BigDecimal(0.1));
+    private static final Account from = new Account("Ivan", "Ivanov", new BigDecimal(10.5));
+    private static final Account to = new Account("Petr", "Petrov", new BigDecimal(0.1));
 
     public static class TestApplication implements SparkApplication {
         @Override
@@ -38,7 +38,7 @@ public class TransferTest {
 
     @Test
     public void transferSufficientAmount() throws Exception {
-        Transfer transfer = new Transfer("111", "222", new BigDecimal(10));
+        Transfer transfer = new Transfer(from.getId(), to.getId(), new BigDecimal(10));
         PostMethod post = testServer.post("/api/transfer", new Gson().toJson(transfer), false);
 
         HttpResponse httpResponse = testServer.execute(post);
@@ -47,7 +47,7 @@ public class TransferTest {
 
     @Test
     public void transferInsufficientAmount() throws Exception {
-        Transfer transfer = new Transfer("111", "222", new BigDecimal(1000));
+        Transfer transfer = new Transfer(from.getId(), to.getId(), new BigDecimal(1000));
         PostMethod post = testServer.post("/api/transfer", new Gson().toJson(transfer), false);
 
         HttpResponse httpResponse = testServer.execute(post);
