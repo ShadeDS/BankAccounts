@@ -38,7 +38,7 @@ public class AccountController {
         };
     }
 
-    public Route createAccount(){
+    public Route createAccount() {
         return (request, response) -> {
             Account user = gson.fromJson(request.body(), Account.class);
             user.generateId();

@@ -9,6 +9,8 @@ import com.nulianov.bankaccounts.service.AccountService;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
@@ -17,11 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AccountServiceImpl implements AccountService {
     private static final Map<UUID, Boolean> lockedAccounts = new ConcurrentHashMap<>();
     private static final DB db = DBMaker.memoryDB().closeOnJvmShutdown().make();
+    private static final Logger log = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Override
     public void addAccount(Account account) throws AccountDuplicationException{
         Map<UUID, Account> storage = getStorage();
         if (storage.get(account.getId()) != null) {
+            log.error("Account with id {} already present in database", account.getId());
             throw new AccountDuplicationException(account.getId());
         }
         storage.put(account.getId(), account);
@@ -34,15 +38,24 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(UUID id) throws Exception {
+    public void deleteAccount(UUID id) throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Try to lock account with id {}", id);
+        }
         while (lockedAccounts.putIfAbsent(id, true) != null) {
             Thread.sleep(1);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Account with id {} is locked", id);
         }
         try {
             getStorage().remove(id);
             db.commit();
         } finally {
             lockedAccounts.remove(id);
+            if (log.isDebugEnabled()) {
+                log.debug("Account with id {} is released", id);
+            }
         }
     }
 
@@ -59,12 +72,21 @@ public class AccountServiceImpl implements AccountService {
             lockSecond = transfer.getTo();
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Try to lock accounts with ids {} and {}", lockFirst, lockSecond);
+        }
         while (lockedAccounts.putIfAbsent(lockFirst, true) != null) {
             Thread.sleep(1);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Account with id {} is locked", lockFirst);
         }
 
         while (lockedAccounts.putIfAbsent(lockSecond, true) != null) {
             Thread.sleep(1);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Account with id {} is locked", lockSecond);
         }
         try {
             Account from = getAccount(transfer.getFrom());
@@ -78,7 +100,14 @@ public class AccountServiceImpl implements AccountService {
             db.commit();
         } finally {
             lockedAccounts.remove(lockSecond);
+            if (log.isDebugEnabled()) {
+                log.debug("Account with id {} is released", lockSecond);
+            }
             lockedAccounts.remove(lockFirst);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Account with id {} is released", lockFirst);
+            }
         }
     }
 
