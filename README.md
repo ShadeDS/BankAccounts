@@ -33,8 +33,8 @@ Creates new bank account in database
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**201**|Account was created|Account|
-|**400**|Account with the same id already exists in database|No Content|
+|**201**|Account was created|[Account](#account)|
+|**400**|Account with the same id already exists in database|string|
 
 
 #### Produces
@@ -62,8 +62,8 @@ Returns account with specified id from database
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**200**|Account was found in database|Account|
-|**404**|Account is not present in database|No Content|
+|**200**|Account was found in database|[Account](#account)|
+|**404**|Account is not present in database|string|
 
 
 #### Produces
@@ -91,7 +91,7 @@ Removes account with specified id from database
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**200**|Account was deleted|No Content|
+|**200**|Account was deleted|string|
 
 
 ### Transfer money between accounts
@@ -115,9 +115,9 @@ Transfers money from one account to another
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**200**|Transfer was completed successfully|No Content|
-|**400**|Transfer failed because sender has insufficient funds|No Content|
-|**500**|Internal error|No Content|
+|**200**|Transfer was completed successfully|string|
+|**400**|Transfer failed because sender has insufficient funds|string|
+|**500**|Internal error|string|
 
 
 ## Definitions
