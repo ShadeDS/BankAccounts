@@ -116,7 +116,8 @@ Transfers money from one account to another
 |HTTP Code|Description|Schema|
 |---|---|---|
 |**200**|Transfer was completed successfully|string|
-|**400**|Transfer failed because sender has insufficient funds|string|
+|**400**|Transfer failed because sender has insufficient funds or amount for transfer is invalid|string|
+|**404**|Transfer failed because one of the accounts does not exist|string|
 |**500**|Internal error|string|
 
 

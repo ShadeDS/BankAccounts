@@ -1,5 +1,6 @@
 package com.nulianov.bankaccounts.domain;
 
+import com.nulianov.bankaccounts.exception.IllegalAmountOfMoneyForTransactionException;
 import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 
 import java.io.Serializable;
@@ -48,15 +49,21 @@ public class Account implements Serializable {
         }
     }
 
-    public void withdraw(BigDecimal amount) {
-        if (balance.compareTo(amount) < 0) {
+    public void withdraw(BigDecimal amount) throws IllegalAmountOfMoneyForTransactionException, InsufficientFundsException {
+        if (amount.signum() < 0) {
+            throw new IllegalAmountOfMoneyForTransactionException(amount);
+        }
+        else if (balance.compareTo(amount) < 0) {
             throw new InsufficientFundsException(id);
         } else {
             balance = balance.subtract(amount);
         }
     }
 
-    public void deposit(BigDecimal amount) {
+    public void deposit(BigDecimal amount) throws IllegalAmountOfMoneyForTransactionException {
+        if (amount.signum() < 0) {
+            throw new IllegalAmountOfMoneyForTransactionException(amount);
+        }
         balance = balance.add(amount);
     }
 }

@@ -3,6 +3,8 @@ package com.nulianov.bankaccounts.service;
 import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
 import com.nulianov.bankaccounts.exception.AccountDuplicationException;
+import com.nulianov.bankaccounts.exception.AccountNotFoundException;
+import com.nulianov.bankaccounts.exception.IllegalAmountOfMoneyForTransactionException;
 import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 
 import java.util.UUID;
@@ -39,6 +41,8 @@ public interface AccountService {
      * @param transfer transfer specifies the sender, the recipient and the amount of money to transfer
      * @throws InterruptedException thread was interrupted while trying to lock account
      * @throws InsufficientFundsException account has no sufficient funds to transfer
+     * @throws AccountNotFoundException account is absent in storage
+     * @throws IllegalAmountOfMoneyForTransactionException amount for transfer is invalid
      */
-    void transfer(Transfer transfer) throws InterruptedException, InsufficientFundsException;
+    void transfer(Transfer transfer) throws InterruptedException, InsufficientFundsException, IllegalAmountOfMoneyForTransactionException, AccountNotFoundException;
 }
