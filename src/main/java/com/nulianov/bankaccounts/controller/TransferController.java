@@ -3,6 +3,8 @@ package com.nulianov.bankaccounts.controller;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.nulianov.bankaccounts.domain.Transfer;
+import com.nulianov.bankaccounts.exception.AccountNotFoundException;
+import com.nulianov.bankaccounts.exception.IllegalAmountOfMoneyForTransactionException;
 import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 import com.nulianov.bankaccounts.service.AccountService;
 import org.eclipse.jetty.http.HttpStatus;
@@ -25,8 +27,11 @@ public class TransferController {
                 Transfer transferInfo = gson.fromJson(request.body(), Transfer.class);
                 log.info("Transfer from {} to {}", transferInfo.getFrom(), transferInfo.getTo());
                 accountService.transfer(transferInfo);
-            } catch (InsufficientFundsException e) {
+            } catch (InsufficientFundsException | IllegalAmountOfMoneyForTransactionException e) {
                 response.status(HttpStatus.BAD_REQUEST_400);
+                return e.getMessage();
+            } catch (AccountNotFoundException e) {
+                response.status(HttpStatus.NOT_FOUND_404);
                 return e.getMessage();
             } catch (Exception e) {
                 response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);

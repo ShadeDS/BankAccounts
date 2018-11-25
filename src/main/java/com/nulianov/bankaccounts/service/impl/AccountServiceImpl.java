@@ -4,6 +4,8 @@ import com.nulianov.bankaccounts.domain.Account;
 import com.nulianov.bankaccounts.domain.Transfer;
 import com.nulianov.bankaccounts.domain.serializer.CustomAccountSerializer;
 import com.nulianov.bankaccounts.exception.AccountDuplicationException;
+import com.nulianov.bankaccounts.exception.AccountNotFoundException;
+import com.nulianov.bankaccounts.exception.IllegalAmountOfMoneyForTransactionException;
 import com.nulianov.bankaccounts.exception.InsufficientFundsException;
 import com.nulianov.bankaccounts.service.AccountService;
 import org.mapdb.DB;
@@ -60,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void transfer(Transfer transfer) throws InterruptedException, InsufficientFundsException {
+    public void transfer(Transfer transfer) throws InterruptedException, InsufficientFundsException, IllegalAmountOfMoneyForTransactionException, AccountNotFoundException {
         Map<UUID, Account> storage = getStorage();
 
         UUID lockFirst, lockSecond;
@@ -90,7 +92,13 @@ public class AccountServiceImpl implements AccountService {
         }
         try {
             Account from = getAccount(transfer.getFrom());
+            if (from == null) {
+                throw new AccountNotFoundException(transfer.getFrom());
+            }
             Account to = getAccount(transfer.getTo());
+            if (to == null) {
+                throw new AccountNotFoundException(transfer.getTo());
+            }
 
             from.withdraw(transfer.getAmount());
             to.deposit(transfer.getAmount());
@@ -103,8 +111,8 @@ public class AccountServiceImpl implements AccountService {
             if (log.isDebugEnabled()) {
                 log.debug("Account with id {} is released", lockSecond);
             }
-            lockedAccounts.remove(lockFirst);
 
+            lockedAccounts.remove(lockFirst);
             if (log.isDebugEnabled()) {
                 log.debug("Account with id {} is released", lockFirst);
             }
